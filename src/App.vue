@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { useAccountsStore } from './stores/counter'
 import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
-import { onMounted } from 'vue'
 
 const store = useAccountsStore()
 const { accounts } = storeToRefs(store)
-const createAccount = computed(() => store.createAccount)
-const deleteAccount = computed(() => store.deleteAccount)
+const createAccount = store.createAccount
+const deleteAccount = store.deleteAccount
 
-const showPassword = ref(false)
 const typeRecords = ['LDAP', 'Локальная']
-const valid = ref<boolean>()
+
 const passwordRules = {
   required: (value: string) => !!value || 'Required.',
   max: (v: string) => v.length <= 100 || 'Max 100 characters',
@@ -24,9 +21,11 @@ const loginRules = {
   required: (value: string) => !!value || 'Required.',
   max: (v: string) => v.length <= 100 || 'Max 100 characters',
 }
-const getFromStorage = async () => {
-  accounts.value = JSON.parse(localStorage.getItem('state'))
+const getFromStorage = () => {
+  const savedData = localStorage.getItem('state')
+  accounts.value = savedData !== null ? JSON.parse(savedData) : createAccount()
 }
+getFromStorage()
 
 watch(
   () => accounts.value,
@@ -37,7 +36,6 @@ watch(
   },
   { deep: true },
 )
-onMounted(getFromStorage)
 </script>
 
 <template>
@@ -51,7 +49,7 @@ onMounted(getFromStorage)
       text="Для указания нескольких меток для одной пары логин/пароль используйте разделитель ;"
     ></v-alert>
     <div class="flex flex-col">
-      <v-form v-for="account in accounts" :key="account.id" v-model="valid">
+      <v-form v-for="account in accounts" :key="account.id">
         <v-container>
           <v-row>
             <v-col cols="12" md="3">
@@ -94,10 +92,14 @@ onMounted(getFromStorage)
               ></v-text-field>
             </v-col>
 
-            <v-col v-if="account.recordType == 'Локальная'" cols="12" md="2">
+            <v-col
+              v-if="account.recordType == 'Локальная' || account.recordType == ''"
+              cols="12"
+              md="2"
+            >
               <v-text-field
                 v-model="account.password"
-                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :append-inner-icon="account.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[passwordRules.required, passwordRules.max]"
                 :type="account.showPassword ? 'text' : 'password'"
                 label="Пароль"

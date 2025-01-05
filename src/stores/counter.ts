@@ -21,9 +21,12 @@ export const useAccountsStore = defineStore('accounts', () => {
       showPassword: false,
     }
     accounts.value.push(account)
+    localStorage.setItem('state', JSON.stringify(account))
   }
   const deleteAccount = (id: `${string}-${string}-${string}-${string}-${string}`) => {
-    accounts.value = accounts.value.filter((account) => account.id !== id)
+    if (accounts.value) {
+      accounts.value = accounts.value.filter((account) => account.id !== id)
+    }
   }
 
   return { accounts, createAccount, deleteAccount }
