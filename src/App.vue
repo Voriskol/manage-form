@@ -1,38 +1,31 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-// export default {
-//   data() {
-//     return {
-//       show1: false,
-//       show2: true,
-//       password: 'Password',
-//       rules: {
-//         required: (value) => !!value || 'Required.',
-//         min: (v) => v.length >= 8 || 'Min 8 characters',
-//         emailMatch: () => `The email and password you entered don't match`,
-//       },
-//     }
-//   },
-// }
-
-const show1 = ref(false)
-const show2 = ref(true)
-const password = ref('Password')
+const showPassword = ref(false)
+const password = ref()
 const marks = ref('YYY')
 const login = ref('Obama')
+const typeRecord = ['LDAP', 'Локальная']
+const selectedTypeRecord = ref('Локальная')
 const passwordRules = {
-  required: (value) => !!value || 'Required.',
-  max: (v) => v.length <= 100 || 'Max 100 characters',
-  emailMatch: () => `The email and password you entered don't match`,
+  required: (value: string) => !!value || 'Required.',
+  max: (v: string) => v.length <= 100 || 'Max 100 characters',
 }
 const markRules = {
-  max: (v) => v.length <= 50 || 'Max 50 characters',
+  max: (v: string) => v.length <= 50 || 'Max 50 characters',
 }
 const loginRules = {
-  required: (value) => !!value || 'Required.',
-  max: (v) => v.length <= 100 || 'Max 100 characters',
+  required: (value: string) => !!value || 'Required.',
+  max: (v: string) => v.length <= 100 || 'Max 100 characters',
 }
+interface IAccount {
+  marks: Array<string>
+  recordType: string
+  login: string
+  password: string
+}
+const accounts = ref<IAccount>()
+const createAccount = () => {}
 </script>
 
 <template>
@@ -57,10 +50,15 @@ const loginRules = {
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="3">
-            <v-select clearable label="Тип записи" :items="['LDAP', 'Локальная']"></v-select>
+            <v-select
+              v-model="selectedTypeRecord"
+              clearable
+              label="Тип записи"
+              :items="typeRecord"
+            ></v-select>
           </v-col>
 
-          <v-col cols="12" md="3">
+          <v-col cols="12" :md="[selectedTypeRecord == 'LDAP' ? '5' : '3']">
             <v-text-field
               v-model="login"
               :counter="100"
@@ -70,17 +68,16 @@ const loginRules = {
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" md="2">
+          <v-col v-if="selectedTypeRecord == 'Локальная'" cols="12" md="2">
             <v-text-field
               v-model="password"
-              :append-inner-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :rules="[passwordRules.required, passwordRules.max]"
-              :type="show1 ? 'text' : 'password'"
-              hint="At least 8 characters"
+              :type="showPassword ? 'text' : 'password'"
               label="Пароль"
               name="input-10-1"
-              counter
-              @click:append-inner="show1 = !show1"
+              :counter="100"
+              @click:append-inner="showPassword = !showPassword"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="1">
