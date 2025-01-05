@@ -1,14 +1,30 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useUserStore = defineStore('user', () => {
-  const count = ref(0)
-  const doubleCount = computed(() => count.value * 2)
-  function increment() {
-    count.value++
+export const useAccountsStore = defineStore('accounts', () => {
+  interface IAccount {
+    id: `${string}-${string}-${string}-${string}-${string}`
+    marks: string
+    recordType: string
+    login: string
+    password: string
+    showPassword: boolean
   }
-  const accounts = ref()
-  const addAccount = 
+  const accounts = ref<Array<IAccount>>([])
+  const createAccount = () => {
+    const account = {
+      id: self.crypto.randomUUID(),
+      marks: '',
+      recordType: '',
+      login: '',
+      password: '',
+      showPassword: false,
+    }
+    accounts.value.push(account)
+  }
+  const deleteAccount = (id: `${string}-${string}-${string}-${string}-${string}`) => {
+    accounts.value = accounts.value.filter((account) => account.id !== id)
+  }
 
-  return { count, doubleCount, increment }
+  return { accounts, createAccount, deleteAccount }
 })
