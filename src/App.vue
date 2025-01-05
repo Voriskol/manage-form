@@ -10,6 +10,7 @@ const deleteAccount = store.deleteAccount
 
 const typeRecords = ['LDAP', 'Локальная']
 
+// Валидация данных
 const passwordRules = {
   required: (value: string) => !!value || 'Required.',
   max: (v: string) => v.length <= 100 || 'Max 100 characters',
@@ -21,12 +22,15 @@ const loginRules = {
   required: (value: string) => !!value || 'Required.',
   max: (v: string) => v.length <= 100 || 'Max 100 characters',
 }
-const getFromStorage = () => {
+
+// Получение данных из localStorage
+const getDataFromLocalStorage = () => {
   const savedData = localStorage.getItem('state')
   accounts.value = savedData !== null ? JSON.parse(savedData) : createAccount()
 }
-getFromStorage()
+getDataFromLocalStorage()
 
+//  При добавлении новой учетной записи данные в localStorage сразу обновятся
 watch(
   () => accounts.value,
   (newValue) => {
