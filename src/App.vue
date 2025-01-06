@@ -24,11 +24,6 @@ const loginRules = {
 }
 
 // Получение данных из localStorage
-const getDataFromLocalStorage = () => {
-  const savedData = localStorage.getItem('state')
-  accounts.value = savedData !== null ? JSON.parse(savedData) : createAccount()
-}
-getDataFromLocalStorage()
 
 //  При добавлении новой учетной записи данные в localStorage сразу обновятся
 watch(
