@@ -26,6 +26,7 @@ const loginRules = {
 }
 
 const makeAnArrayFromMarks = (account: IAccount) => {
+  //@ts-ignore
   const arr = account.marks.split('; ')
   account.marks = arr
 }
