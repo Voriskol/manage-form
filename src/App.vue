@@ -12,15 +12,15 @@ const typeRecords = ['LDAP', 'Локальная']
 
 // Валидация данных
 const passwordRules = {
-  required: (value: string) => !!value || 'Required.',
-  max: (v: string) => v.length <= 100 || 'Max 100 characters',
+  required: (value: string) => !!value || 'Обязательно для заполнения',
+  max: (v: string) => v.length <= 100 || 'Максимум 100 символов',
 }
 const markRules = {
-  max: (v: string) => v.length <= 50 || 'Max 50 characters',
+  max: (v: string) => v.length <= 50 || 'Максимум 50 символов',
 }
 const loginRules = {
-  required: (value: string) => !!value || 'Required.',
-  max: (v: string) => v.length <= 100 || 'Max 100 characters',
+  required: (value: string) => !!value || 'Обязательно для заполнения',
+  max: (v: string) => v.length <= 100 || 'Максимум 100 символов',
 }
 
 // Получение данных из localStorage
