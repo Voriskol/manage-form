@@ -1,40 +1,34 @@
 <script setup lang="ts">
 import { useAccountsStore } from './stores/counter'
 import { storeToRefs } from 'pinia'
-import { watch } from 'vue'
+import type { IAccount } from '@/interfaces'
 
+// Объявление хранилища
 const store = useAccountsStore()
 const { accounts } = storeToRefs(store)
 const createAccount = store.createAccount
 const deleteAccount = store.deleteAccount
 
+// значения поля select
 const typeRecords = ['LDAP', 'Локальная']
 
 // Валидация данных
 const passwordRules = {
-  required: (value: string) => !!value || 'Обязательно для заполнения',
+  required: (value: string) => !!value || 'Обязательно',
   max: (v: string) => v.length <= 100 || 'Максимум 100 символов',
 }
 const markRules = {
   max: (v: string) => v.length <= 50 || 'Максимум 50 символов',
 }
 const loginRules = {
-  required: (value: string) => !!value || 'Обязательно для заполнения',
+  required: (value: string) => !!value || 'Обязательно',
   max: (v: string) => v.length <= 100 || 'Максимум 100 символов',
 }
 
-// Получение данных из localStorage
-
-//  При добавлении новой учетной записи данные в localStorage сразу обновятся
-watch(
-  () => accounts.value,
-  (newValue) => {
-    if (newValue) {
-      localStorage.setItem('state', JSON.stringify(accounts.value))
-    }
-  },
-  { deep: true },
-)
+const makeAnArrayFromMarks = (account: IAccount) => {
+  const arr = account.marks.split('; ')
+  account.marks = arr
+}
 </script>
 
 <template>
@@ -48,7 +42,12 @@ watch(
       text="Для указания нескольких меток для одной пары логин/пароль используйте разделитель ;"
     ></v-alert>
     <div class="flex flex-col">
-      <v-form v-for="account in accounts" :key="account.id">
+      <v-form
+        v-for="account in accounts"
+        :key="account.id"
+        v-model="account.valid"
+        validate-on="eager"
+      >
         <v-container>
           <v-row>
             <v-col cols="12" md="3">
@@ -57,6 +56,7 @@ watch(
                 :counter="50"
                 :rules="[markRules.max]"
                 label="Метки"
+                @blur="makeAnArrayFromMarks(account)"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="3">
